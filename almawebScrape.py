@@ -77,7 +77,7 @@ while True:
                     print("Anzahl Prüfungsergebnisse: " + str(str(scrape).count('<tr class="tbdata">')))
                     if str(scrape).count('<tr class="tbdata">') != ergebnisCount:
                         msg = MIMEMultipart('alternative')
-                        msg["Subject"] = "Neue Noten im Almaweb!"
+                        msg["Subject"] = "Neue Noten im Almaweb! " + datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                         msg["From"] = str(Header(config.email["FromName"] + "<" + config.email["From"] + ">"))
                         msg["To"] = config.email["To"]
 
