@@ -1,5 +1,6 @@
 # AlmawebScrape
-Scrapes out the results of tests and sends you an email as soon as there is a new one.
+Scrapes out the results of tests and sends you an email as soon as there is a new one.\
+***NOTE: I have not testet the script with another account than mine***
 
 ## Required Software
 - Python3
