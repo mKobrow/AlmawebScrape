@@ -13,5 +13,5 @@ They may be already installed, if not just install with `pip3`.
 
 ## Instructions
 Rename the `config_blanko.py` to `config.py`and edit it.
-Put the Files onto your Server and use `./startscript.sh -start` to start the Service.
+Put the Files onto your Server and use `./startscript.sh start` to start the Service.
 If its working you should recieve an email.
