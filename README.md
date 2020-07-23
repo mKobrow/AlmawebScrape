@@ -8,7 +8,7 @@ Scrapes out the results of tests and sends you an email as soon as there is a ne
 ## Required Python3 Libs
 - requests
 - bs4
-- email  
+- email\
 They may be already installed, if not just install with `pip3`.
 
 ## Instructions
