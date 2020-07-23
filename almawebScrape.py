@@ -6,9 +6,13 @@ from bs4 import BeautifulSoup
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.header import Header
 import datetime
 import time
 import sys
+from random import randint
+
+import config
 
 ergebnisCount = 0
 connectionErrorCount = 0
@@ -29,12 +33,13 @@ def getCookie(s):
 
 
 while True:
+    sleeptime = randint(config.refreshTime["upper"], config.refreshTime["lower"])
     try:
         print(datetime.datetime.today())
         if datetime.datetime.today().weekday() != 5 and datetime.datetime.today().weekday() != 6 and 8 < datetime.datetime.today().hour < 22:
             payload = {
-                "usrname": "mk65seji",
-                "pass": "*!/9got2fF$0w=SqiI%6",
+                "usrname": config.almaweb["user"],
+                "pass": config.almaweb["password"],
                 "APPNAME": "CampusNet",
                 "PRGNAME": "LOGINCHECK",
                 "ARGUMENTS": "clino,usrname,pass,menuno,menu_type,browser,platform",
@@ -46,7 +51,7 @@ while True:
             }
             login = requests.post("https://almaweb.uni-leipzig.de/scripts/mgrqispi.dll", data=payload)
             if "REFRESH" not in login.headers:
-                time.sleep(1800)
+                time.sleep(sleeptime)
                 continue
             else:
                 print("Erfolgreich eingeloggt.")
@@ -71,13 +76,10 @@ while True:
                     scrape = soup.find("table", {"class": "nb list"})
                     print("Anzahl Prüfungsergebnisse: " + str(str(scrape).count('<tr class="tbdata">')))
                     if str(scrape).count('<tr class="tbdata">') != ergebnisCount:
-                        me = "mail@mkobrow.de"
-                        you = "max.kobrow@gmail.com"
-
                         msg = MIMEMultipart('alternative')
                         msg["Subject"] = "Neue Noten im Almaweb!"
-                        msg["From"] = me
-                        msg["To"] = you
+                        msg["From"] = str(Header(config.email["FromName"] + "<" + config.email["From"] + ">"))
+                        msg["To"] = config.email["To"]
 
                         text = "Neue Noten!"
                         html = """\
@@ -93,10 +95,10 @@ while True:
                         msg.attach(part1)
                         msg.attach(part2)
 
-                        server = smtplib.SMTP('smtp.strato.de: 587')
+                        server = smtplib.SMTP(config.email["FromSMTP"])
                         server.starttls()
-                        server.login(me, "Momaxox1999")
-                        server.sendmail(me, you, msg.as_string())
+                        server.login(config.email["From"], config.email["FromPassword"])
+                        server.sendmail(config.email["From"], config.email["To"], msg.as_string())
                         server.quit()
                         ergebnisCount = str(scrape).count('<tr class="tbdata">')
                 else:
@@ -107,19 +109,17 @@ while True:
             print("Am Wochenende und nachts wird nicht abgefragt.")
             print("\n")
         connectionErrorCount = 0
-        time.sleep(1800)
+        time.sleep(sleeptime)
     except KeyboardInterrupt:
         exit()
     except KeyError as e:
         print(e)
         print(login.headers)
-        me = "mail@mkobrow.de"
-        you = "max.kobrow@gmail.com"
 
         msg = MIMEMultipart('alternative')
         msg["Subject"] = "KeyError im Almaweb Scrape"
-        msg["From"] = me
-        msg["To"] = you
+        msg["From"] = str(Header(config.email["FromName"] + "<" + config.email["From"] + ">"))
+        msg["To"] = config.email["To"]
 
         text = "Fehler ist aufgetreten! " + str(sys.exc_info()[0])
         html = """\
@@ -136,24 +136,22 @@ while True:
         msg.attach(part1)
         msg.attach(part2)
 
-        server = smtplib.SMTP('smtp.strato.de: 587')
+        server = smtplib.SMTP(config.email["FromSMTP"])
         server.starttls()
-        server.login(me, "Momaxox1999")
-        server.sendmail(me, you, msg.as_string())
+        server.login(config.email["From"], config.email["FromPassword"])
+        server.sendmail(config.email["From"], config.email["To"], msg.as_string())
         server.quit()
-        time.sleep(1800)
+        time.sleep(sleeptime)
         continue
     except ConnectionError:
         connectionErrorCount += 1
         if connectionErrorCount == 4:
             print("Unerwarteter Fehler: " + str(sys.exc_info()[0]))
-            me = "mail@mkobrow.de"
-            you = "max.kobrow@gmail.com"
 
             msg = MIMEMultipart('alternative')
             msg["Subject"] = "4. Connection Error"
-            msg["From"] = me
-            msg["To"] = you
+            msg["From"] = str(Header(config.email["FromName"] + "<" + config.email["From"] + ">"))
+            msg["To"] = config.email["To"]
 
             text = "Fehler ist aufgetreten! " + str(sys.exc_info()[0])
             html = """\
@@ -170,22 +168,20 @@ while True:
             msg.attach(part1)
             msg.attach(part2)
 
-            server = smtplib.SMTP('smtp.strato.de: 587')
+            server = smtplib.SMTP(config.email["FromSMTP"])
             server.starttls()
-            server.login(me, "Momaxox1999")
-            server.sendmail(me, you, msg.as_string())
+            server.login(config.email["From"], config.email["FromPassword"])
+            server.sendmail(config.email["From"], config.email["To"], msg.as_string())
             server.quit()
-            time.sleep(1800)
+            time.sleep(sleeptime)
             continue
     except:
         print("Unerwarteter Fehler: " + str(sys.exc_info()[0]))
-        me = "mail@mkobrow.de"
-        you = "max.kobrow@gmail.com"
 
         msg = MIMEMultipart('alternative')
         msg["Subject"] = "Fehler im Programm!"
-        msg["From"] = me
-        msg["To"] = you
+        msg["From"] = str(Header(config.email["FromName"] + "<" + config.email["From"] + ">"))
+        msg["To"] = config.email["To"]
 
         text = "Fehler ist aufgetreten! " + str(sys.exc_info()[0])
         html = """\
@@ -202,10 +198,10 @@ while True:
         msg.attach(part1)
         msg.attach(part2)
 
-        server = smtplib.SMTP('smtp.strato.de: 587')
+        server = smtplib.SMTP(config.email["FromSMTP"])
         server.starttls()
-        server.login(me, "Momaxox1999")
-        server.sendmail(me, you, msg.as_string())
+        server.login(config.email["From"], config.email["FromPassword"])
+        server.sendmail(config.email["From"], config.email["To"], msg.as_string())
         server.quit()
-        time.sleep(1800)
+        time.sleep(sleeptime)
         continue
