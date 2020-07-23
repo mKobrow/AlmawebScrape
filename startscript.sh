@@ -28,7 +28,7 @@ if [[ $1 == "stop" ]]
                 then
                     echo "There is already an Instance running."
                 else
-                    screen -L -Logfile ${DIR}/logs/${logName} -S tadoAPI -d -m  /usr/bin/python3 ${DIR}/almawebScrape.py
+                    screen -L -Logfile ${DIR}/logs/${logName}.log -S ${ScreenProcess} -d -m  /usr/bin/python3 ${DIR}/almawebScrape.py
                     echo "Created new Instance"
             fi
     else
